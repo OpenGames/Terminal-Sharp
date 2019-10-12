@@ -7,10 +7,17 @@ namespace CoreSFML.resources
 {
     class Characters
     {
-        private byte[,] characters = new byte[char.MaxValue, 12];
+        private byte?[,] characters = new byte?[char.MaxValue, 12];
 
         public Characters()
         {
+            for (int code = 0; code < char.MaxValue; code++)
+            {
+                for (int row = 0; row < 12; row++)
+                {
+                    characters[code, row] = null;
+                }
+            }
         }
 
         public void LoadFromBytes(byte[] fontContents)
@@ -50,9 +57,9 @@ namespace CoreSFML.resources
             }
         }
 
-        public byte[] GetCharacter(char code)
+        public byte?[] GetCharacter(char code)
         {
-            return new byte[] { 
+            return new byte?[] { 
                 this.characters[code, 0],
                 this.characters[code, 1],
                 this.characters[code, 2],

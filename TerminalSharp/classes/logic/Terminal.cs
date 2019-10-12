@@ -28,7 +28,7 @@ namespace CoreSFML.classes.logic
             Characters set = new Characters();
             set.LoadFromFile("resources/fonts/termfont.zf");
 
-            Renderer renderer = new Renderer(ref TermTexture, W, H, DPP);
+            Renderer renderer = new Renderer(ref TermTexture, ref set, W, H, DPP);
             Logic logic = new Logic(this, ref renderer, ref set);
 
             window.KeyPressed += logic.KeyHandler;

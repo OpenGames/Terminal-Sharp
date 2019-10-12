@@ -53,23 +53,6 @@ namespace CoreSFML.classes
             {
                 renderer.SetPixel(++x, y, 1);
             }
-
-            if(key.Code == Keyboard.Key.Enter)
-            {
-                cursorPosX = 0;
-                if (cursorPosY + this.renderer.charSizeY > this.renderer.TermHeight - this.renderer.charSizeY)
-                {
-                    renderer.MoveScreen((int)renderer.TermHeight - cursorPosY - (int)renderer.charSizeY - 6);
-                }
-                else
-                {
-                    cursorPosY += (int)this.renderer.charSizeY;
-                }
-
-                this.renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter('>'));
-                handleCommands(command);
-                command = "";
-            }
             
         }
 
@@ -90,15 +73,85 @@ namespace CoreSFML.classes
                 }
             }
 
-            command += text.Unicode.ToLower();
-            renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter((char)(text.Unicode.ToUpper())[0]));
-            cursorPosX += (int)this.renderer.charSizeX;
+            if (text.Unicode == "\r" || text.Unicode == "\n")
+            {
+                cursorPosX = 0;
+                if (cursorPosY + this.renderer.charSizeY > this.renderer.TermHeight - this.renderer.charSizeY)
+                {
+                    renderer.MoveScreen((int)renderer.TermHeight - cursorPosY - (int)renderer.charSizeY - 6);
+                }
+                else
+                {
+                    cursorPosY += (int)this.renderer.charSizeY;
+                }
+
+                this.renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter('>'));
+                cursorPosX += (int)this.renderer.charSizeX;
+                handleCommands(command);
+                command = "";
+            }
+            else if(text.Unicode == "\b")
+            {
+                command = command.Remove(command.Length - 1);
+               
+                cursorPosX -= (int)this.renderer.charSizeX;
+                renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter(' '));
+            }
+            else
+            {
+                command += text.Unicode.ToLower();
+                renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter((char)(text.Unicode.ToUpper())[0]));
+                cursorPosX += (int)this.renderer.charSizeX;
+            }
+
+            
 
         }
 
         void handleCommands(string command)
         {
-            Console.WriteLine(command);
+            if(command == "help")
+            {
+                println("no one will");
+            }
+        }
+
+        void println(string text)
+        {
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (cursorPosX + this.renderer.charSizeX > this.renderer.TermWidth)
+                {
+                    cursorPosX = 0;
+                    if (cursorPosY + this.renderer.charSizeY > this.renderer.TermHeight - this.renderer.charSizeY)
+                    {
+
+                        renderer.MoveScreen((int)renderer.TermHeight - cursorPosY - (int)renderer.charSizeY - 6);
+
+                    }
+                    else
+                    {
+                        cursorPosY += (int)this.renderer.charSizeY;
+                    }
+                }
+
+
+                this.renderer.PrintCharacter(cursorPosX, cursorPosY, characters.GetCharacter(text.ToUpper()[i]));
+                cursorPosX += (int)this.renderer.charSizeX;
+            }
+
+            //aka \n
+            //-----------------------------------
+            cursorPosX = 0;
+            if (cursorPosY + this.renderer.charSizeY > this.renderer.TermHeight - this.renderer.charSizeY)
+            {
+                renderer.MoveScreen((int)renderer.TermHeight - cursorPosY - (int)renderer.charSizeY - 6);
+            }
+            else
+            {
+                cursorPosY += (int)this.renderer.charSizeY;
+            }
+            //-----------------------------------
         }
     }
 }

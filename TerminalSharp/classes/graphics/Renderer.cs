@@ -3,12 +3,14 @@ using SFML.Window;
 using SFML.Graphics;
 using SFML.Audio;
 using SFML.System;
+using CoreSFML.resources;
 
 namespace CoreSFML
 {
     class Renderer
     {
         private Texture tex;
+        private Characters characters;
         private uint Width, Height, DPP;
 
         private byte bpp = 1;
@@ -26,9 +28,10 @@ namespace CoreSFML
         // Событие, возникающее при выводе денег
         public event BufferStateHandler onBufferUpdated;
 
-        public Renderer(ref Texture window, uint width, uint height, uint dpp)
+        public Renderer(ref Texture window, ref Characters characters, uint width, uint height, uint dpp)
         {
             this.tex = window;
+            this.characters = characters;
             this.Width = width;
             this.Height = height;
             this.DPP = dpp;
@@ -116,9 +119,9 @@ namespace CoreSFML
             UpdateBytes();
         }
 
-        public void PrintCharacter(int x, int y, byte[] character)
+        public void PrintCharacter(int x, int y, byte?[] character)
         {
-            if (character != null)
+            if (character[0] != null)
             {
                 for (int j = 0; j < 12; j++)
                 {
@@ -131,6 +134,10 @@ namespace CoreSFML
                     PixelMap[2 + x + 6, 3 + y + j] = (byte)((character[j] & (1 << 1)) > 0 ? 1 : 0);
                     PixelMap[2 + x + 7, 3 + y + j] = (byte)((character[j] & (1 << 0)) > 0 ? 1 : 0);
                 }
+            }
+            else
+            {
+                PrintCharacter(x, y, characters.GetCharacter((char)0));
             }
 
             UpdateBytes();
