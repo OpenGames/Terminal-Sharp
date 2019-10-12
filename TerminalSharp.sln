@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29403.142
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerminalSharp", "CoreSFML\TerminalSharp.csproj", "{4AC6075E-B45D-4EDA-8AA7-8D85102AAD15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerminalSharp", "TerminalSharp\TerminalSharp.csproj", "{4AC6075E-B45D-4EDA-8AA7-8D85102AAD15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
