@@ -45,8 +45,8 @@ namespace CoreSFML.classes.logic
                 Shader.SetUniform("TermTex", TermTexture);
             };
 
-            var c = set.GetCharacter('A');
-            renderer.PrintCharacter(0, 0, c);
+            //var c = set.GetCharacter('A');
+            //renderer.PrintCharacter(0, 0, c);
 
             while (window.IsOpen)
             {

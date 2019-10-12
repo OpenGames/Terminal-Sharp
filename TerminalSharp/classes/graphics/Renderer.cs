@@ -17,6 +17,10 @@ namespace CoreSFML
 
         private byte[,] PixelMap;
 
+        public uint TermWidth, TermHeight;
+        public uint charSizeX = 8 + 2; //size + offset
+        public uint charSizeY = 12 + 3; //size + offset
+
         // Объявляем делегат
         public delegate void BufferStateHandler(string message);
         // Событие, возникающее при выводе денег
@@ -28,6 +32,9 @@ namespace CoreSFML
             this.Width = width;
             this.Height = height;
             this.DPP = dpp;
+
+            this.TermWidth = width / dpp;
+            this.TermHeight = height / dpp;
 
             this.PixelMap = new byte[width / dpp, height / dpp];
             for (int y = 0; y < (height / dpp); y++)
@@ -127,6 +134,28 @@ namespace CoreSFML
             }
 
             UpdateBytes();
+        }
+
+        public void MoveScreen(int toY)
+        {
+            for (int y = 0; y < TermHeight; y++)
+            {
+                if (y < TermHeight - charSizeY)
+                {
+                    for (int x = 0; x < TermWidth; x++)
+                    {
+                        PixelMap[x, y] = PixelMap[x, y + charSizeY];
+                    }
+                }
+                else
+                {
+                    for (int x = 0; x < TermWidth; x++)
+                    {
+                        PixelMap[x, y] = 0;
+                    }
+                }
+
+            }
         }
 
         private void UpdateBytes()

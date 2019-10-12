@@ -4,6 +4,8 @@ void main()
 {
 	// lookup the pixel in the texture
 
+	//lul
+
 	vec4 pixel = texture2D(TermTex, gl_TexCoord[0].xy);
 
 	// multiply it by the color

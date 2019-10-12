@@ -9,6 +9,9 @@ namespace CoreSFML.classes
 {
     class Logic
     {
+        int cursorPosX = 0;
+        int cursorPosY = 0;
+
         private Renderer renderer;
         private Characters characters;
         private int x = 0, y = 0;
@@ -51,7 +54,23 @@ namespace CoreSFML.classes
 
         public void TextHandler(object sender, TextEventArgs text)
         {
-            renderer.PrintCharacter(0, 0, this.characters.GetCharacter((char)text.Unicode[0]));
+            if (cursorPosX + this.renderer.charSizeX > this.renderer.TermWidth)
+            {
+                cursorPosX = 0;
+                if (cursorPosY + this.renderer.charSizeY > this.renderer.TermHeight - this.renderer.charSizeY)
+                {
+                    Console.WriteLine("Moved");
+                    renderer.MoveScreen((int)renderer.TermHeight - cursorPosY - (int)renderer.charSizeY - 6);
+                    
+                }
+                else
+                {
+                    cursorPosY += (int)this.renderer.charSizeY;
+                }
+            }
+            renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter((char)(text.Unicode.ToUpper())[0]));
+            cursorPosX += (int)this.renderer.charSizeX;
+
         }
     }
 }

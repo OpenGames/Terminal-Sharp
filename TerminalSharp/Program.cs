@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Extensions.DependencyModel;
 using CoreSFML.classes.logic;
+using System;
 
 namespace CoreSFML
 {
@@ -13,6 +14,7 @@ namespace CoreSFML
 
         static void Main(string[] args)
         {
+            Console.WriteLine("Terminal loading started...");
             Terminal terminal = new Terminal();
         }
     }
