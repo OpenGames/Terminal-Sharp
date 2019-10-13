@@ -11,10 +11,11 @@ namespace CoreSFML.classes.logic
     class Terminal
     {
         private uint W = 800, H = 600, DPP = 6;
+        private bool work = true;
         public Terminal()
         {
-            //W = VideoMode.DesktopMode.Width;
-            //H = VideoMode.DesktopMode.Height;
+            W = VideoMode.DesktopMode.Width;
+            H = VideoMode.DesktopMode.Height;
 
             var window = new RenderWindow(new VideoMode(W, H), "Shaders yay", Styles.None);
             var Screen = new VertexArray(PrimitiveType.Quads, 4);
@@ -29,32 +30,33 @@ namespace CoreSFML.classes.logic
             set.LoadFromFile("resources/fonts/termfont.zf");
 
             Renderer renderer = new Renderer(ref TermTexture, ref set, W, H, DPP);
-            Logic logic = new Logic(this, ref renderer, ref set);
-
-            window.KeyPressed += logic.KeyHandler;
-            window.TextEntered += logic.TextHandler;
-
             var Shader = new Shader(null, null, "shaders/fragment.glsl");//"shaders/vertex.glsl"
 
             Shader.SetUniform("TermTex", TermTexture);
-
-            var r = new RenderStates(Shader);
-            var bg = new Color(0, 0, 25);
-
+            
             renderer.onBufferUpdated += (s) => {
                 Shader.SetUniform("TermTex", TermTexture);
             };
 
-            //var c = set.GetCharacter('A');
-            //renderer.PrintCharacter(0, 0, c);
+            Logic logic = new Logic(this, ref renderer, ref set);
+            window.KeyPressed += logic.KeyHandler;
+            window.TextEntered += logic.TextHandler;
 
-            while (window.IsOpen)
+            var r = new RenderStates(Shader);
+            var bg = new Color(0, 0, 25);
+
+            while (window.IsOpen && work)
             {
                 window.DispatchEvents();
                 window.Clear(bg);
                 window.Draw(Screen, r);
                 window.Display();
             }
+            window.Close();
+        }
+        public void Close()
+        {
+            work = false;
         }
     }
 }

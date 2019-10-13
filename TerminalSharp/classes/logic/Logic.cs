@@ -25,6 +25,9 @@ namespace CoreSFML.classes
             this.renderer = r;
             this.characters = charset;
             this.terminal = t;
+
+            this.renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter('>'));
+            cursorPosX += (int)this.renderer.charSizeX;
         }
         public void KeyHandler(object sender, KeyEventArgs key)
         {
@@ -85,9 +88,11 @@ namespace CoreSFML.classes
                     cursorPosY += (int)this.renderer.charSizeY;
                 }
 
-                this.renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter('>'));
+                
                 cursorPosX += (int)this.renderer.charSizeX;
                 handleCommands(command);
+                this.renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter('>'));
+                cursorPosX += (int)this.renderer.charSizeX;
                 command = "";
             }
             else if(text.Unicode == "\b")
@@ -113,6 +118,10 @@ namespace CoreSFML.classes
             if(command == "help")
             {
                 println("no one will");
+            }
+            else if(command == "exit")
+            {
+                this.terminal.Close();
             }
         }
 
