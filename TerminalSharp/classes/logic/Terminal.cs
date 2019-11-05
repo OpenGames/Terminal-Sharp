@@ -10,7 +10,7 @@ namespace CoreSFML.classes.logic
 {
     class Terminal
     {
-        private uint W = 800, H = 600, DPP = 6;
+        private uint W = 800, H = 600, DPP = 2;
         private bool work = true;
 
         RenderWindow window;
@@ -39,7 +39,7 @@ namespace CoreSFML.classes.logic
             set = new Characters();
             set.LoadFromFile("resources/fonts/termfont.zf");
 
-            renderer = new Renderer(ref TermTexture, ref set, W, H, DPP);
+            renderer = new Renderer(TermTexture, ref set, W, H, DPP);
             Shader = new Shader(null, null, "shaders/fragment.glsl");//"shaders/vertex.glsl"
 
             Shader.SetUniform("TermTex", TermTexture);
@@ -75,10 +75,22 @@ namespace CoreSFML.classes.logic
             W = vector.X;
             H = vector.Y;
 
-            TermTexture.Update(new Texture(W / DPP, H / DPP), 0, 0);
+            TermTexture = new Texture(W / DPP, H / DPP);
+            renderer.ResetTexture(TermTexture, W, H, DPP);
 
             window.Size = vector;
             
+        }
+        public void ChangeResolution(uint dpp)
+        {
+            DPP = dpp;
+
+            TermTexture = new Texture(W / DPP, H / DPP);
+            renderer.ResetTexture(TermTexture, W, H, DPP);
+        }
+        public void Clear()
+        {
+            renderer.ResetScreen();
         }
     }
 }

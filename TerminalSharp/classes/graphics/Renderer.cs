@@ -28,7 +28,7 @@ namespace CoreSFML
         // Событие, возникающее при выводе денег
         public event BufferStateHandler onBufferUpdated;
 
-        public Renderer(ref Texture window, ref Characters characters, uint width, uint height, uint dpp)
+        public Renderer(Texture window, ref Characters characters, uint width, uint height, uint dpp)
         {
             this.tex = window;
             this.characters = characters;
@@ -169,6 +169,44 @@ namespace CoreSFML
         {
             this.tex.Update(Convert(ref PixelMap));
             onBufferUpdated("");
+        }
+
+        public void ResetTexture(Texture texture, uint width, uint height, uint dpp)
+        {
+            this.tex = texture;
+            this.Width = width;
+            this.Height = height;
+            this.DPP = dpp;
+
+            this.TermWidth = width / dpp;
+            this.TermHeight = height / dpp;
+
+            byte[,] NewPixelMap = new byte[width / dpp, height / dpp];
+            for (int y = 0; y < (height / dpp); y++)
+            {
+                for (int x = 0; x < (width / dpp); x++)
+                {
+                    if (x < PixelMap.GetLength(0) && y < PixelMap.GetLength(1))
+                        NewPixelMap[x, y] = PixelMap[x, y];
+                    else
+                        NewPixelMap[x, y] = 0;
+                }
+            }
+
+            PixelMap = NewPixelMap;
+
+            this.tex.Update(Convert(ref PixelMap));
+        }
+
+        public void ResetScreen()
+        {
+            for (int y = 0; y < TermHeight; y++)
+            {
+                for (int x = 0; x < TermWidth; x++)
+                {
+                    PixelMap[x, y] = 0;
+                }
+            }
         }
     }
 }

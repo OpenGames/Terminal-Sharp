@@ -5,6 +5,7 @@ using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CoreSFML.classes
 {
@@ -19,6 +20,8 @@ namespace CoreSFML.classes
         private Characters characters;
         private Terminal terminal;
         private int x = 0, y = 0;
+
+        private bool regexDebugInfo = true;
 
         public Logic(Terminal t, Renderer r, ref Characters charset)
         {
@@ -89,8 +92,8 @@ namespace CoreSFML.classes
                 }
 
                 
-                cursorPosX += (int)this.renderer.charSizeX;
-                handleCommands(command);
+                //cursorPosX += (int)this.renderer.charSizeX;
+                handleCommands(parseCommand(command));
                 this.renderer.PrintCharacter(cursorPosX, cursorPosY, this.characters.GetCharacter('>'));
                 cursorPosX += (int)this.renderer.charSizeX;
                 command = "";
@@ -113,20 +116,91 @@ namespace CoreSFML.classes
 
         }
 
-        void handleCommands(string command)
+        Command parseCommand(string str)
         {
-            if(command == "help")
+            var m = Regex.Match(str, "^\\w+|\\d+|-\\d+");
+            Command result = new Command();
+
+            if (!m.Success)
+            {
+                result.success = false;
+                return result;
+            }
+            else
+            {
+                if(regexDebugInfo)
+                    println(string.Format("Command: {0}", m.Value));
+                result.command = m.Value;
+                m = m.NextMatch();
+            }
+
+            while (m.Success)
+            {
+                if(regexDebugInfo)
+                    println(string.Format("Arg {0}: {1}", result.arguments.Count, m.Value));
+
+                result.arguments.Add(m.Value);
+                m = m.NextMatch();
+            }
+
+            result.success = true;
+            return result;
+        }
+
+        void handleCommands(Command command)
+        {
+            if (command.command == "help")
             {
                 println("no one will");
             }
-            else if(command == "exit")
+            else if (command.command == "exit")
             {
                 this.terminal.Close();
             }
-            else if(command == "sfc")
+            else if (command.command == "sfc")
             {
-                terminal.Resize(new SFML.System.Vector2u(1920, 1080));
-                //renderer.W
+                if(command.arguments.Count != 2)
+                {
+                    println("this command requres 2 arguments <x> and <y>");
+                }
+                else
+                {
+                    terminal.Resize(new SFML.System.Vector2u(uint.Parse(command.arguments[0]), uint.Parse(command.arguments[1])));
+                    terminal.Clear();
+                    cursorPosX = 0;
+                    cursorPosY = 0;
+                }
+                
+            }
+            else if (command.command == "clear")
+            {
+                this.terminal.Clear();
+                cursorPosX = 0;
+                cursorPosY = 0;
+            }
+            else if(command.command == "set")
+            {
+                switch (int.Parse(command.arguments[0]))
+                {
+                    case 0:
+                        if (command.arguments.Count - 1 == 1)
+                        {
+                            regexDebugInfo = (int.Parse(command.arguments[1]) != 0);
+                        }
+                        break;
+
+                    case 1:
+                        if (command.arguments.Count - 1 == 1)
+                        {
+                            terminal.Clear();
+                            cursorPosX = 0;
+                            cursorPosY = 0;
+                            terminal.ChangeResolution(uint.Parse(command.arguments[1]));
+                        }
+                        break;
+                }
+
+                
             }
         }
 
@@ -167,5 +241,11 @@ namespace CoreSFML.classes
             }
             //-----------------------------------
         }
+    }
+    class Command
+    {
+        internal bool success;
+        internal string command;
+        internal List<string> arguments = new List<string>();
     }
 }
