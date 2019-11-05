@@ -20,7 +20,7 @@ namespace CoreSFML.classes
         private Terminal terminal;
         private int x = 0, y = 0;
 
-        public Logic(Terminal t, ref Renderer r, ref Characters charset)
+        public Logic(Terminal t, Renderer r, ref Characters charset)
         {
             this.renderer = r;
             this.characters = charset;
@@ -122,6 +122,11 @@ namespace CoreSFML.classes
             else if(command == "exit")
             {
                 this.terminal.Close();
+            }
+            else if(command == "sfc")
+            {
+                terminal.Resize(new SFML.System.Vector2u(1920, 1080));
+                //renderer.W
             }
         }
 

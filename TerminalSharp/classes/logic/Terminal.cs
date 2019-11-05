@@ -12,25 +12,35 @@ namespace CoreSFML.classes.logic
     {
         private uint W = 800, H = 600, DPP = 6;
         private bool work = true;
+
+        RenderWindow window;
+        VertexArray Screen;
+        Texture TermTexture;
+        Shader Shader;
+        Renderer renderer;
+        Characters set;
+        Logic logic;
+
         public Terminal()
         {
-            W = VideoMode.DesktopMode.Width;
-            H = VideoMode.DesktopMode.Height;
+            //W = VideoMode.DesktopMode.Width;
+            //H = VideoMode.DesktopMode.Height;
 
-            var window = new RenderWindow(new VideoMode(W, H), "Shaders yay", Styles.None);
-            var Screen = new VertexArray(PrimitiveType.Quads, 4);
+            window = new RenderWindow(new VideoMode(W, H), "Shaders yay", Styles.None);
+            window.Position = new Vector2i(0, 0);
+            Screen = new VertexArray(PrimitiveType.Quads, 4);
 
             Screen.Append(new Vertex(new Vector2f(0, 0), Color.Black, new Vector2f(0, 0)));
             Screen.Append(new Vertex(new Vector2f(W, 0), Color.Black, new Vector2f(1, 0)));
             Screen.Append(new Vertex(new Vector2f(W, H), Color.Black, new Vector2f(1, 1)));
             Screen.Append(new Vertex(new Vector2f(0, H), Color.Black, new Vector2f(0, 1)));
-            var TermTexture = new Texture(W / DPP, H / DPP);
+            TermTexture = new Texture(W / DPP, H / DPP);
 
-            Characters set = new Characters();
+            set = new Characters();
             set.LoadFromFile("resources/fonts/termfont.zf");
 
-            Renderer renderer = new Renderer(ref TermTexture, ref set, W, H, DPP);
-            var Shader = new Shader(null, null, "shaders/fragment.glsl");//"shaders/vertex.glsl"
+            renderer = new Renderer(ref TermTexture, ref set, W, H, DPP);
+            Shader = new Shader(null, null, "shaders/fragment.glsl");//"shaders/vertex.glsl"
 
             Shader.SetUniform("TermTex", TermTexture);
             
@@ -38,9 +48,11 @@ namespace CoreSFML.classes.logic
                 Shader.SetUniform("TermTex", TermTexture);
             };
 
-            Logic logic = new Logic(this, ref renderer, ref set);
+            logic = new Logic(this, renderer, ref set);
             window.KeyPressed += logic.KeyHandler;
             window.TextEntered += logic.TextHandler;
+
+            //window.Size = new SFML.System.Vector2u(1920, 1080);
 
             var r = new RenderStates(Shader);
             var bg = new Color(0, 0, 25);
@@ -57,6 +69,16 @@ namespace CoreSFML.classes.logic
         public void Close()
         {
             work = false;
+        }
+        public void Resize(Vector2u vector)
+        {
+            W = vector.X;
+            H = vector.Y;
+
+            TermTexture.Update(new Texture(W / DPP, H / DPP), 0, 0);
+
+            window.Size = vector;
+            
         }
     }
 }
